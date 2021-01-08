@@ -1,20 +1,23 @@
-import React from "react";
-import {
-  Row,
-  Col,
-  Image,
-  ListGroup,
-  Card,
-  Button,
-  ListGroupItem,
-} from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Row, Col, Image, ListGroup, Card, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Rating from "../components/Rating";
-import products from "../products";
 
 const ProductScreen = (props) => {
   const { match } = props;
-  const product = products.find((item) => item._id === match.params.id);
+  const [product, setProduct] = useState({});
+
+  const getProduct = async (url) => {
+    const resp = await fetch(url);
+    const data = await resp.json();
+    setProduct(data);
+  };
+  useEffect(() => {
+    getProduct(`/api/product/${match.params.id}`);
+  }, [match]);
+
+  console.log("product", product);
+
   return (
     <>
       <Link className='bt btn-light my-3' to='/'>
@@ -22,7 +25,7 @@ const ProductScreen = (props) => {
       </Link>
       <Row>
         <Col md={6}>
-          <Image scr={`${product.image}`} alt={product.name} fluid />
+          <Image scr={product.image} alt={product.name} fluid />
         </Col>
         <Col md={3}>
           <ListGroup variant='flush'>
